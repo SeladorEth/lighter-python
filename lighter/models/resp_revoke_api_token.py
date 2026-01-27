@@ -17,21 +17,21 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr
+from pydantic import BaseModel, ConfigDict, StrictBool, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
-from lighter.models.tx import Tx
 from typing import Optional, Set
 from typing_extensions import Self
 
-class Txs(BaseModel):
+class RespRevokeApiToken(BaseModel):
     """
-    Txs
+    RespRevokeApiToken
     """ # noqa: E501
     code: StrictInt
     message: Optional[StrictStr] = None
-    txs: List[Tx]
+    token_id: StrictInt
+    revoked: StrictBool
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["code", "message", "txs"]
+    __properties: ClassVar[List[str]] = ["code", "message", "token_id", "revoked"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -51,7 +51,7 @@ class Txs(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of Txs from a JSON string"""
+        """Create an instance of RespRevokeApiToken from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -74,13 +74,6 @@ class Txs(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of each item in txs (list)
-        _items = []
-        if self.txs:
-            for _item in self.txs:
-                if _item:
-                    _items.append(_item.to_dict())
-            _dict['txs'] = _items
         # puts key-value pairs in additional_properties in the top level
         if self.additional_properties is not None:
             for _key, _value in self.additional_properties.items():
@@ -90,17 +83,18 @@ class Txs(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of Txs from a dict"""
+        """Create an instance of RespRevokeApiToken from a dict"""
         if obj is None:
             return None
 
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "code": obj.get("code"),
             "message": obj.get("message"),
-            "txs": [Tx.from_dict(_item) for _item in obj["txs"]] if obj.get("txs") is not None else None
+            "token_id": obj.get("token_id"),
+            "revoked": obj.get("revoked")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

@@ -17,20 +17,18 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr
-from typing import Any, ClassVar, Dict, List, Optional
+from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from typing import Any, ClassVar, Dict, List
 from typing import Optional, Set
 from typing_extensions import Self
 
-class CurrentHeight(BaseModel):
+class Auth(BaseModel):
     """
-    CurrentHeight
+    Auth
     """ # noqa: E501
-    code: StrictInt
-    message: Optional[StrictStr] = None
-    height: StrictInt
+    auth: StrictStr = Field(description=" made optional to support header auth clients")
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["code", "message", "height"]
+    __properties: ClassVar[List[str]] = ["auth"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -50,7 +48,7 @@ class CurrentHeight(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of CurrentHeight from a JSON string"""
+        """Create an instance of Auth from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -82,17 +80,15 @@ class CurrentHeight(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of CurrentHeight from a dict"""
+        """Create an instance of Auth from a dict"""
         if obj is None:
             return None
 
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
-            "code": obj.get("code"),
-            "message": obj.get("message"),
-            "height": obj.get("height")
+        _obj = cls.model_construct(**{
+            "auth": obj.get("auth")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

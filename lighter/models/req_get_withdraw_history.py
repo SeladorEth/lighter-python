@@ -26,12 +26,12 @@ class ReqGetWithdrawHistory(BaseModel):
     """
     ReqGetWithdrawHistory
     """ # noqa: E501
-    account_index: StrictInt
     auth: Optional[StrictStr] = Field(default=None, description=" made optional to support header auth clients")
+    account_index: StrictInt
     cursor: Optional[StrictStr] = None
     filter: Optional[StrictStr] = None
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["account_index", "auth", "cursor", "filter"]
+    __properties: ClassVar[List[str]] = ["auth", "account_index", "cursor", "filter"]
 
     @field_validator('filter')
     def filter_validate_enum(cls, value):
@@ -100,9 +100,9 @@ class ReqGetWithdrawHistory(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
-            "account_index": obj.get("account_index"),
+        _obj = cls.model_construct(**{
             "auth": obj.get("auth"),
+            "account_index": obj.get("account_index"),
             "cursor": obj.get("cursor"),
             "filter": obj.get("filter")
         })

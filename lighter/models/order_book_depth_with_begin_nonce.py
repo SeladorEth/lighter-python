@@ -17,31 +17,23 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, StrictStr, field_validator
-from typing import Any, ClassVar, Dict, List, Optional
-from typing_extensions import Annotated
+from pydantic import BaseModel, ConfigDict, StrictInt
+from typing import Any, ClassVar, Dict, List
+from lighter.models.price_level import PriceLevel
 from typing import Optional, Set
 from typing_extensions import Self
 
-class ReqGetCandlesticks(BaseModel):
+class OrderBookDepthWithBeginNonce(BaseModel):
     """
-    ReqGetCandlesticks
+    OrderBookDepthWithBeginNonce
     """ # noqa: E501
-    market_id: StrictInt
-    resolution: StrictStr
-    start_timestamp: Annotated[int, Field(le=5000000000000, strict=True)]
-    end_timestamp: Annotated[int, Field(le=5000000000000, strict=True)]
-    count_back: StrictInt
-    set_timestamp_to_end: Optional[StrictBool] = False
+    asks: List[PriceLevel]
+    bids: List[PriceLevel]
+    offset: StrictInt
+    nonce: StrictInt
+    begin_nonce: StrictInt
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["market_id", "resolution", "start_timestamp", "end_timestamp", "count_back", "set_timestamp_to_end"]
-
-    @field_validator('resolution')
-    def resolution_validate_enum(cls, value):
-        """Validates the enum"""
-        if value not in set(['1m', '5m', '15m', '30m', '1h', '4h', '12h', '1d', '1w']):
-            raise ValueError("must be one of enum values ('1m', '5m', '15m', '30m', '1h', '4h', '12h', '1d', '1w')")
-        return value
+    __properties: ClassVar[List[str]] = ["asks", "bids", "offset", "nonce", "begin_nonce"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -61,7 +53,7 @@ class ReqGetCandlesticks(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of ReqGetCandlesticks from a JSON string"""
+        """Create an instance of OrderBookDepthWithBeginNonce from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -84,6 +76,20 @@ class ReqGetCandlesticks(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
+        # override the default output from pydantic by calling `to_dict()` of each item in asks (list)
+        _items = []
+        if self.asks:
+            for _item in self.asks:
+                if _item:
+                    _items.append(_item.to_dict())
+            _dict['asks'] = _items
+        # override the default output from pydantic by calling `to_dict()` of each item in bids (list)
+        _items = []
+        if self.bids:
+            for _item in self.bids:
+                if _item:
+                    _items.append(_item.to_dict())
+            _dict['bids'] = _items
         # puts key-value pairs in additional_properties in the top level
         if self.additional_properties is not None:
             for _key, _value in self.additional_properties.items():
@@ -93,20 +99,19 @@ class ReqGetCandlesticks(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of ReqGetCandlesticks from a dict"""
+        """Create an instance of OrderBookDepthWithBeginNonce from a dict"""
         if obj is None:
             return None
 
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
-            "market_id": obj.get("market_id"),
-            "resolution": obj.get("resolution"),
-            "start_timestamp": obj.get("start_timestamp"),
-            "end_timestamp": obj.get("end_timestamp"),
-            "count_back": obj.get("count_back"),
-            "set_timestamp_to_end": obj.get("set_timestamp_to_end") if obj.get("set_timestamp_to_end") is not None else False
+        _obj = cls.model_construct(**{
+            "asks": [PriceLevel.from_dict(_item) for _item in obj["asks"]] if obj.get("asks") is not None else None,
+            "bids": [PriceLevel.from_dict(_item) for _item in obj["bids"]] if obj.get("bids") is not None else None,
+            "offset": obj.get("offset"),
+            "nonce": obj.get("nonce"),
+            "begin_nonce": obj.get("begin_nonce")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

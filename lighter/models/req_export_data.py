@@ -17,7 +17,7 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr, field_validator
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
@@ -26,7 +26,7 @@ class ReqExportData(BaseModel):
     """
     ReqExportData
     """ # noqa: E501
-    auth: Optional[StrictStr] = None
+    auth: Optional[StrictStr] = Field(default=None, description=" made optional to support header auth clients")
     account_index: Optional[StrictInt] = -1
     market_id: Optional[StrictInt] = None
     type: StrictStr
@@ -97,7 +97,7 @@ class ReqExportData(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "auth": obj.get("auth"),
             "account_index": obj.get("account_index") if obj.get("account_index") is not None else -1,
             "market_id": obj.get("market_id"),

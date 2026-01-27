@@ -17,31 +17,31 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr
-from typing import Any, ClassVar, Dict, List
-from lighter.models.tx import Tx
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, StrictStr, field_validator
+from typing import Any, ClassVar, Dict, List, Optional
+from typing_extensions import Annotated
 from typing import Optional, Set
 from typing_extensions import Self
 
-class Block(BaseModel):
+class ReqGetCandles(BaseModel):
     """
-    Block
+    ReqGetCandles
     """ # noqa: E501
-    commitment: StrictStr
-    height: StrictInt
-    state_root: StrictStr
-    priority_operations: StrictInt
-    on_chain_l2_operations: StrictInt
-    pending_on_chain_operations_pub_data: StrictStr
-    committed_tx_hash: StrictStr
-    committed_at: StrictInt
-    verified_tx_hash: StrictStr
-    verified_at: StrictInt
-    txs: List[Tx]
-    status: StrictInt
-    size: StrictInt
+    market_id: StrictInt
+    resolution: StrictStr
+    start_timestamp: Annotated[int, Field(le=5000000000000, strict=True)]
+    end_timestamp: Annotated[int, Field(le=5000000000000, strict=True)]
+    count_back: StrictInt
+    set_timestamp_to_end: Optional[StrictBool] = False
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["commitment", "height", "state_root", "priority_operations", "on_chain_l2_operations", "pending_on_chain_operations_pub_data", "committed_tx_hash", "committed_at", "verified_tx_hash", "verified_at", "txs", "status", "size"]
+    __properties: ClassVar[List[str]] = ["market_id", "resolution", "start_timestamp", "end_timestamp", "count_back", "set_timestamp_to_end"]
+
+    @field_validator('resolution')
+    def resolution_validate_enum(cls, value):
+        """Validates the enum"""
+        if value not in set(['1m', '5m', '15m', '30m', '1h', '4h', '12h', '1d', '1w']):
+            raise ValueError("must be one of enum values ('1m', '5m', '15m', '30m', '1h', '4h', '12h', '1d', '1w')")
+        return value
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -61,7 +61,7 @@ class Block(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of Block from a JSON string"""
+        """Create an instance of ReqGetCandles from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -84,13 +84,6 @@ class Block(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of each item in txs (list)
-        _items = []
-        if self.txs:
-            for _item in self.txs:
-                if _item:
-                    _items.append(_item.to_dict())
-            _dict['txs'] = _items
         # puts key-value pairs in additional_properties in the top level
         if self.additional_properties is not None:
             for _key, _value in self.additional_properties.items():
@@ -100,27 +93,20 @@ class Block(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of Block from a dict"""
+        """Create an instance of ReqGetCandles from a dict"""
         if obj is None:
             return None
 
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
-            "commitment": obj.get("commitment"),
-            "height": obj.get("height"),
-            "state_root": obj.get("state_root"),
-            "priority_operations": obj.get("priority_operations"),
-            "on_chain_l2_operations": obj.get("on_chain_l2_operations"),
-            "pending_on_chain_operations_pub_data": obj.get("pending_on_chain_operations_pub_data"),
-            "committed_tx_hash": obj.get("committed_tx_hash"),
-            "committed_at": obj.get("committed_at"),
-            "verified_tx_hash": obj.get("verified_tx_hash"),
-            "verified_at": obj.get("verified_at"),
-            "txs": [Tx.from_dict(_item) for _item in obj["txs"]] if obj.get("txs") is not None else None,
-            "status": obj.get("status"),
-            "size": obj.get("size")
+        _obj = cls.model_construct(**{
+            "market_id": obj.get("market_id"),
+            "resolution": obj.get("resolution"),
+            "start_timestamp": obj.get("start_timestamp"),
+            "end_timestamp": obj.get("end_timestamp"),
+            "count_back": obj.get("count_back"),
+            "set_timestamp_to_end": obj.get("set_timestamp_to_end") if obj.get("set_timestamp_to_end") is not None else False
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

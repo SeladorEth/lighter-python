@@ -17,23 +17,21 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictFloat, StrictInt, StrictStr
-from typing import Any, ClassVar, Dict, List, Union
+from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr
+from typing import Any, ClassVar, Dict, List, Optional
+from lighter.models.api_token import ApiToken
 from typing import Optional, Set
 from typing_extensions import Self
 
-class ReferralPointEntry(BaseModel):
+class RespGetApiTokens(BaseModel):
     """
-    ReferralPointEntry
+    RespGetApiTokens
     """ # noqa: E501
-    l1_address: StrictStr
-    total_points: Union[StrictFloat, StrictInt]
-    week_points: Union[StrictFloat, StrictInt]
-    total_reward_points: Union[StrictFloat, StrictInt]
-    week_reward_points: Union[StrictFloat, StrictInt]
-    reward_point_multiplier: StrictStr
+    code: StrictInt
+    message: Optional[StrictStr] = None
+    api_tokens: List[ApiToken]
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["l1_address", "total_points", "week_points", "total_reward_points", "week_reward_points", "reward_point_multiplier"]
+    __properties: ClassVar[List[str]] = ["code", "message", "api_tokens"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -53,7 +51,7 @@ class ReferralPointEntry(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of ReferralPointEntry from a JSON string"""
+        """Create an instance of RespGetApiTokens from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -76,6 +74,13 @@ class ReferralPointEntry(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
+        # override the default output from pydantic by calling `to_dict()` of each item in api_tokens (list)
+        _items = []
+        if self.api_tokens:
+            for _item in self.api_tokens:
+                if _item:
+                    _items.append(_item.to_dict())
+            _dict['api_tokens'] = _items
         # puts key-value pairs in additional_properties in the top level
         if self.additional_properties is not None:
             for _key, _value in self.additional_properties.items():
@@ -85,20 +90,17 @@ class ReferralPointEntry(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of ReferralPointEntry from a dict"""
+        """Create an instance of RespGetApiTokens from a dict"""
         if obj is None:
             return None
 
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
-            "l1_address": obj.get("l1_address"),
-            "total_points": obj.get("total_points"),
-            "week_points": obj.get("week_points"),
-            "total_reward_points": obj.get("total_reward_points"),
-            "week_reward_points": obj.get("week_reward_points"),
-            "reward_point_multiplier": obj.get("reward_point_multiplier")
+        _obj = cls.model_construct(**{
+            "code": obj.get("code"),
+            "message": obj.get("message"),
+            "api_tokens": [ApiToken.from_dict(_item) for _item in obj["api_tokens"]] if obj.get("api_tokens") is not None else None
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

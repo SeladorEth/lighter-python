@@ -17,19 +17,19 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr
-from typing import Any, ClassVar, Dict, List, Optional
+from pydantic import BaseModel, ConfigDict, StrictBool, StrictStr
+from typing import Any, ClassVar, Dict, List
 from typing import Optional, Set
 from typing_extensions import Self
 
-class ReqGetReferralPoints(BaseModel):
+class ReqDoFaucet(BaseModel):
     """
-    ReqGetReferralPoints
+    ReqDoFaucet
     """ # noqa: E501
-    auth: Optional[StrictStr] = Field(default=None, description=" made optional to support header auth clients")
-    account_index: StrictInt
+    l1_address: StrictStr
+    do_l1_transfer: StrictBool
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["auth", "account_index"]
+    __properties: ClassVar[List[str]] = ["l1_address", "do_l1_transfer"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -49,7 +49,7 @@ class ReqGetReferralPoints(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of ReqGetReferralPoints from a JSON string"""
+        """Create an instance of ReqDoFaucet from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -81,16 +81,16 @@ class ReqGetReferralPoints(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of ReqGetReferralPoints from a dict"""
+        """Create an instance of ReqDoFaucet from a dict"""
         if obj is None:
             return None
 
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
-            "auth": obj.get("auth"),
-            "account_index": obj.get("account_index")
+        _obj = cls.model_construct(**{
+            "l1_address": obj.get("l1_address"),
+            "do_l1_transfer": obj.get("do_l1_transfer") if obj.get("do_l1_transfer") is not None else False
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

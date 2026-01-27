@@ -26,11 +26,11 @@ class ReqGetAccountActiveOrders(BaseModel):
     """
     ReqGetAccountActiveOrders
     """ # noqa: E501
+    auth: Optional[StrictStr] = Field(default=None, description=" made optional to support header auth clients")
     account_index: StrictInt
     market_id: StrictInt
-    auth: Optional[StrictStr] = Field(default=None, description=" made optional to support header auth clients")
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["account_index", "market_id", "auth"]
+    __properties: ClassVar[List[str]] = ["auth", "account_index", "market_id"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -89,10 +89,10 @@ class ReqGetAccountActiveOrders(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
+            "auth": obj.get("auth"),
             "account_index": obj.get("account_index"),
-            "market_id": obj.get("market_id"),
-            "auth": obj.get("auth")
+            "market_id": obj.get("market_id")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

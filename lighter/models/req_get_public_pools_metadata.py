@@ -27,7 +27,7 @@ class ReqGetPublicPoolsMetadata(BaseModel):
     """
     ReqGetPublicPoolsMetadata
     """ # noqa: E501
-    auth: Optional[StrictStr] = None
+    auth: Optional[StrictStr] = Field(default=None, description=" made optional to support header auth clients")
     filter: Optional[StrictStr] = None
     index: StrictInt
     limit: Annotated[int, Field(le=100, strict=True, ge=1)]
@@ -102,7 +102,7 @@ class ReqGetPublicPoolsMetadata(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "auth": obj.get("auth"),
             "filter": obj.get("filter"),
             "index": obj.get("index"),

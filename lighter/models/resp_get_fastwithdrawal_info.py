@@ -19,20 +19,20 @@ import json
 
 from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
-from lighter.models.block import Block
 from typing import Optional, Set
 from typing_extensions import Self
 
-class Blocks(BaseModel):
+class RespGetFastwithdrawalInfo(BaseModel):
     """
-    Blocks
+    RespGetFastwithdrawalInfo
     """ # noqa: E501
     code: StrictInt
     message: Optional[StrictStr] = None
-    total: StrictInt
-    blocks: List[Block]
+    to_account_index: StrictInt
+    withdraw_limit: StrictStr
+    max_withdrawal_amount: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["code", "message", "total", "blocks"]
+    __properties: ClassVar[List[str]] = ["code", "message", "to_account_index", "withdraw_limit", "max_withdrawal_amount"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -52,7 +52,7 @@ class Blocks(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of Blocks from a JSON string"""
+        """Create an instance of RespGetFastwithdrawalInfo from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -75,13 +75,6 @@ class Blocks(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of each item in blocks (list)
-        _items = []
-        if self.blocks:
-            for _item in self.blocks:
-                if _item:
-                    _items.append(_item.to_dict())
-            _dict['blocks'] = _items
         # puts key-value pairs in additional_properties in the top level
         if self.additional_properties is not None:
             for _key, _value in self.additional_properties.items():
@@ -91,18 +84,19 @@ class Blocks(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of Blocks from a dict"""
+        """Create an instance of RespGetFastwithdrawalInfo from a dict"""
         if obj is None:
             return None
 
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "code": obj.get("code"),
             "message": obj.get("message"),
-            "total": obj.get("total"),
-            "blocks": [Block.from_dict(_item) for _item in obj["blocks"]] if obj.get("blocks") is not None else None
+            "to_account_index": obj.get("to_account_index"),
+            "withdraw_limit": obj.get("withdraw_limit"),
+            "max_withdrawal_amount": obj.get("max_withdrawal_amount")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

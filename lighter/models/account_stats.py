@@ -30,7 +30,7 @@ class AccountStats(BaseModel):
     collateral: StrictStr
     portfolio_value: StrictStr
     leverage: StrictStr
-    available_balance: Optional[StrictStr]
+    available_balance: StrictStr
     margin_usage: StrictStr
     buying_power: StrictStr
     cross_stats: AccountMarginStats
@@ -101,7 +101,7 @@ class AccountStats(BaseModel):
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "collateral": obj.get("collateral"),
             "portfolio_value": obj.get("portfolio_value"),
             "leverage": obj.get("leverage"),

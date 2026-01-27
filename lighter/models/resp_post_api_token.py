@@ -17,22 +17,27 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr
+from pydantic import BaseModel, ConfigDict, StrictBool, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
-from lighter.models.candlestick import Candlestick
 from typing import Optional, Set
 from typing_extensions import Self
 
-class Candlesticks(BaseModel):
+class RespPostApiToken(BaseModel):
     """
-    Candlesticks
+    RespPostApiToken
     """ # noqa: E501
     code: StrictInt
     message: Optional[StrictStr] = None
-    resolution: StrictStr
-    candlesticks: List[Candlestick]
+    token_id: StrictInt
+    api_token: StrictStr
+    name: StrictStr
+    account_index: StrictInt
+    expiry: StrictInt
+    sub_account_access: StrictBool
+    revoked: StrictBool
+    scopes: StrictStr
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["code", "message", "resolution", "candlesticks"]
+    __properties: ClassVar[List[str]] = ["code", "message", "token_id", "api_token", "name", "account_index", "expiry", "sub_account_access", "revoked", "scopes"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -52,7 +57,7 @@ class Candlesticks(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of Candlesticks from a JSON string"""
+        """Create an instance of RespPostApiToken from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -75,13 +80,6 @@ class Candlesticks(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of each item in candlesticks (list)
-        _items = []
-        if self.candlesticks:
-            for _item in self.candlesticks:
-                if _item:
-                    _items.append(_item.to_dict())
-            _dict['candlesticks'] = _items
         # puts key-value pairs in additional_properties in the top level
         if self.additional_properties is not None:
             for _key, _value in self.additional_properties.items():
@@ -91,18 +89,24 @@ class Candlesticks(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of Candlesticks from a dict"""
+        """Create an instance of RespPostApiToken from a dict"""
         if obj is None:
             return None
 
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
+        _obj = cls.model_construct(**{
             "code": obj.get("code"),
             "message": obj.get("message"),
-            "resolution": obj.get("resolution"),
-            "candlesticks": [Candlestick.from_dict(_item) for _item in obj["candlesticks"]] if obj.get("candlesticks") is not None else None
+            "token_id": obj.get("token_id"),
+            "api_token": obj.get("api_token"),
+            "name": obj.get("name"),
+            "account_index": obj.get("account_index"),
+            "expiry": obj.get("expiry"),
+            "sub_account_access": obj.get("sub_account_access"),
+            "revoked": obj.get("revoked"),
+            "scopes": obj.get("scopes")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

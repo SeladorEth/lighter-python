@@ -1,4 +1,4 @@
-# Blocks
+# Candles
 
 
 ## Properties
@@ -7,25 +7,25 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **code** | **int** |  | 
 **message** | **str** |  | [optional] 
-**total** | **int** |  | 
-**blocks** | [**List[Block]**](Block.md) |  | 
+**r** | **str** |  resolution | 
+**c** | [**List[Candle]**](Candle.md) |  candles | 
 
 ## Example
 
 ```python
-from lighter.models.blocks import Blocks
+from lighter.models.candles import Candles
 
 # TODO update the JSON string below
 json = "{}"
-# create an instance of Blocks from a JSON string
-blocks_instance = Blocks.from_json(json)
+# create an instance of Candles from a JSON string
+candles_instance = Candles.from_json(json)
 # print the JSON string representation of the object
-print(Blocks.to_json())
+print(Candles.to_json())
 
 # convert the object into a dict
-blocks_dict = blocks_instance.to_dict()
-# create an instance of Blocks from a dict
-blocks_from_dict = Blocks.from_dict(blocks_dict)
+candles_dict = candles_instance.to_dict()
+# create an instance of Candles from a dict
+candles_from_dict = Candles.from_dict(candles_dict)
 ```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

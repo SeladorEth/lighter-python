@@ -17,34 +17,18 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr
+from pydantic import BaseModel, ConfigDict, StrictInt
 from typing import Any, ClassVar, Dict, List
-from typing_extensions import Annotated
 from typing import Optional, Set
 from typing_extensions import Self
 
-class Tx(BaseModel):
+class ReqGetApiTokens(BaseModel):
     """
-    Tx
+    ReqGetApiTokens
     """ # noqa: E501
-    hash: StrictStr
-    type: Annotated[int, Field(le=64, strict=True, ge=1)]
-    info: StrictStr
-    event_info: StrictStr
-    status: StrictInt
-    transaction_index: StrictInt
-    l1_address: StrictStr
     account_index: StrictInt
-    nonce: StrictInt
-    expire_at: StrictInt
-    block_height: StrictInt
-    queued_at: StrictInt
-    executed_at: StrictInt
-    sequence_index: StrictInt
-    parent_hash: StrictStr
-    api_key_index: StrictInt
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["hash", "type", "info", "event_info", "status", "transaction_index", "l1_address", "account_index", "nonce", "expire_at", "block_height", "queued_at", "executed_at", "sequence_index", "parent_hash", "api_key_index"]
+    __properties: ClassVar[List[str]] = ["account_index"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -64,7 +48,7 @@ class Tx(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of Tx from a JSON string"""
+        """Create an instance of ReqGetApiTokens from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -96,30 +80,15 @@ class Tx(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of Tx from a dict"""
+        """Create an instance of ReqGetApiTokens from a dict"""
         if obj is None:
             return None
 
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
-            "hash": obj.get("hash"),
-            "type": obj.get("type"),
-            "info": obj.get("info"),
-            "event_info": obj.get("event_info"),
-            "status": obj.get("status"),
-            "transaction_index": obj.get("transaction_index"),
-            "l1_address": obj.get("l1_address"),
-            "account_index": obj.get("account_index"),
-            "nonce": obj.get("nonce"),
-            "expire_at": obj.get("expire_at"),
-            "block_height": obj.get("block_height"),
-            "queued_at": obj.get("queued_at"),
-            "executed_at": obj.get("executed_at"),
-            "sequence_index": obj.get("sequence_index"),
-            "parent_hash": obj.get("parent_hash"),
-            "api_key_index": obj.get("api_key_index")
+        _obj = cls.model_construct(**{
+            "account_index": obj.get("account_index")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():

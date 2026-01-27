@@ -17,20 +17,29 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictBool, StrictInt, StrictStr
-from typing import Any, ClassVar, Dict, List, Optional
+from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt
+from typing import Any, ClassVar, Dict, List, Union
 from typing import Optional, Set
 from typing_extensions import Self
 
-class RespUpdateReferralCode(BaseModel):
+class Candle(BaseModel):
     """
-    RespUpdateReferralCode
+    Candle
     """ # noqa: E501
-    code: StrictInt
-    message: Optional[StrictStr] = None
-    success: StrictBool
+    t: StrictInt = Field(description=" timestamp")
+    o: Union[StrictFloat, StrictInt] = Field(description=" open")
+    h: Union[StrictFloat, StrictInt] = Field(description=" high")
+    l: Union[StrictFloat, StrictInt] = Field(description=" low")
+    c: Union[StrictFloat, StrictInt] = Field(description=" close")
+    o: Union[StrictFloat, StrictInt] = Field(description=" open_raw", alias="O")
+    h: Union[StrictFloat, StrictInt] = Field(description=" high_raw", alias="H")
+    l: Union[StrictFloat, StrictInt] = Field(description=" low_raw", alias="L")
+    c: Union[StrictFloat, StrictInt] = Field(description=" close_raw", alias="C")
+    v: Union[StrictFloat, StrictInt] = Field(description=" volume0")
+    v: Union[StrictFloat, StrictInt] = Field(description=" volume1", alias="V")
+    i: StrictInt = Field(description=" last_trade_id")
     additional_properties: Dict[str, Any] = {}
-    __properties: ClassVar[List[str]] = ["code", "message", "success"]
+    __properties: ClassVar[List[str]] = ["t", "o", "h", "l", "c", "O", "H", "L", "C", "v", "V", "i"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -50,7 +59,7 @@ class RespUpdateReferralCode(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of RespUpdateReferralCode from a JSON string"""
+        """Create an instance of Candle from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -82,17 +91,26 @@ class RespUpdateReferralCode(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of RespUpdateReferralCode from a dict"""
+        """Create an instance of Candle from a dict"""
         if obj is None:
             return None
 
         if not isinstance(obj, dict):
             return cls.model_validate(obj)
 
-        _obj = cls.model_validate({
-            "code": obj.get("code"),
-            "message": obj.get("message"),
-            "success": obj.get("success")
+        _obj = cls.model_construct(**{
+            "t": obj.get("t"),
+            "o": obj.get("o"),
+            "h": obj.get("h"),
+            "l": obj.get("l"),
+            "c": obj.get("c"),
+            "O": obj.get("O"),
+            "H": obj.get("H"),
+            "L": obj.get("L"),
+            "C": obj.get("C"),
+            "v": obj.get("v"),
+            "V": obj.get("V"),
+            "i": obj.get("i")
         })
         # store additional fields in additional_properties
         for _key in obj.keys():
